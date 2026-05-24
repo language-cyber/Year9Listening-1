@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ms" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Mendengar IGCSE (40 Marks)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body{background:#f8fafc;font-family:sans-serif; transition: filter 0.3s ease;}
+        .no-select { -webkit-user-select: none; user-select: none; }
+        @media print { html, body { display: none !important; } }
+        .blurred-security { filter: blur(25px) grayscale(100%) !important; pointer-events: none !important; opacity: 0.2 !important; }
+        .opt-btn{width:100%;text-align:left;padding:1rem;border:2px solid #e2e8f0;border-radius:1rem;margin-bottom:0.75rem;transition:all 0.2s;font-weight:600;display:flex;align-items:center;background:white;cursor:pointer;}
+        .opt-btn:hover{border-color:#cbd5e1;background:#f1f5f9;}
+        .opt-btn:disabled{cursor:not-allowed;}
+        .correct-answer{background-color:#10b981!important;color:white;border-color:#059669!important;}
+        .wrong-answer{background-color:#ef4444!important;color:white;border-color:#b91c1c!important;}
+        .dimmed-answer{opacity:0.4; filter:grayscale(100%);}
+        .selected{border-color:#3b82f6;background-color:#eff6ff;}
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .line-through-red { text-decoration: line-through; color: #9f1239; }
+        #welcome-modal { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="py-10 px-4 min-h-screen pt-24 pb-10 flex flex-col items-center no-select" id="app-body">
+    <div id="welcome-modal" class="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl transform scale-100 transition-transform">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-black text-indigo-900 uppercase italic">Pendaftaran Pelajar</h2>
+                <p class="text-sm text-slate-500 font-medium mt-2">Sila lengkapkan butiran di bawah sebelum memulakan ujian.</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Nama Penuh</label>
+                    <input type="text" id="student-name" placeholder="Contoh: Ahmad Albab" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors" />
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Pilih Guru Anda</label>
+                    <select id="student-teacher" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors bg-white">
+                        <option value="" disabled selected>Pilih Guru...</option>
+                        <option value="Satina">Cikgu Satina</option>
+                        <option value="Shahrizan">Cikgu Shahrizan</option>
+                        <option value="Aziana">Cikgu Aziana</option>
+                        <option value="Farra">Cikgu Farra</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Tahun (Year)</label>
+                        <select id="student-year" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors bg-white">
+                            <option value="" disabled selected>Pilih...</option>
+                            <option value="7">Year 7</option>
+                            <option value="8">Year 8</option>
+                            <option value="9">Year 9</option>
+                            <option value="10">Year 10</option>
+                            <option value="11">Year 11</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-indigo-600 mb-1">Tahap Kelas</label>
+                        <select id="student-level" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 outline-none font-bold text-slate-800 transition-colors bg-white">
+                            <option value="" disabled selected>Pilih...</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Foundation">Foundation</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="startQuiz()" class="w-full py-4 mt-2 bg-indigo-600 text-white rounded-xl font-black uppercase tracking-widest shadow-lg hover:bg-indigo-700 hover:scale-[1.02] transition-all">Mula Ujian Sekarang</button>
+            </div>
+        </div>
+    </div>
+    <div class="fixed top-0 left-0 w-full bg-white/95 backdrop-blur-md border-b shadow-sm z-50 py-3 px-4 sm:px-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-xs sm:text-sm font-black text-indigo-900 uppercase italic leading-none">Latihan Mendengar IGCSE (40 Marks)</h1>
+            <p class="text-[8px] font-bold text-slate-400 mt-1 uppercase"><span id="display-student-name">Pelajar</span> | </p>
+        </div>
+        <div class="text-lg sm:text-xl font-black text-indigo-600 leading-none bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-100 flex items-center gap-2">
+            <button onclick="refreshPage()" class="text-[9px] bg-white text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 border border-slate-200 px-2 py-1 rounded-lg uppercase tracking-wider font-bold transition-colors shadow-sm cursor-pointer">Refresh ↻</button>
+            <button onclick="logoutUser()" class="btn-logout text-[9px] bg-rose-100 text-rose-600 hover:bg-rose-500 hover:text-white px-2 py-1 rounded-lg uppercase tracking-wider font-bold transition-colors shadow-sm cursor-pointer">Log Keluar</button>
+            <span id="offline-indicator" class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" title="Auto-Save Aktif"></span>
+            <span>Skor: <span id="score-display">-</span> / <span id="total-display">0</span></span>
+        </div>
+    </div>
+    <div id="main-content" class="max-w-3xl mx-auto w-full mt-4 hidden">
+        <div id="tabs" class="flex overflow-x-auto gap-2 mb-4 pb-2 hide-scrollbar px-1"></div>
+        <div id="box" class="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 mb-8"></div>
+    </div>
+    <div id="submitting-overlay" class="fixed inset-0 z-[200] bg-white/80 backdrop-blur-sm flex-col items-center justify-center hidden">
+        <div class="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+        <h3 class="text-lg font-black text-indigo-900 uppercase">Menghantar Jawapan...</h3>
+        <p class="text-xs font-bold text-slate-500 mt-1">Sila tunggu sebentar.</p>
+    </div>
+    <script>
+
+const sections = [{"id":1,"title":"Bhg 1 (S1-8)","type":"objective","situation":"Cuaca panas terik menyebabkan penduduk mencari perlindungan di bawah teduhan pokok.","dialogue":"","questions":[{"id":1,"text":"Apakah tindakan segera yang diambil oleh penduduk akibat cuaca panas terik?","options":{"A":"Mereka pulang ke rumah.","B":"Mereka mencari payung.","C":"Mereka mencari tempat berteduh.","D":"Mereka membeli minuman sejuk."},"correct":"C","evidence":"F1 (Puan Salmah): Ramai yang saya lihat tadi berteduh di bawah pokok-pokok besar di tepi jalan. M1 (Encik Azmi): Mencari sedikit teduhan pun dah cukup melegakan."},{"id":2,"text":"Bagaimanakah Puan Salmah menggambarkan keadaan cuaca panas tersebut?","options":{"A":"Sejuk dan nyaman.","B":"Teruk dan membahang.","C":"Biasa-biasa sahaja.","D":"Sederhana dan selesa."},"correct":"B","evidence":"F1 (Puan Salmah): Dari pagi tadi lagi matahari memancar terik. ... Saya rasa ini antara cuaca panas paling teruk yang kita alami dalam tahun ini."},{"id":3,"text":"Apakah risiko kesihatan utama yang disebut dalam perbualan ini akibat cuaca panas?","options":{"A":"Strok haba dan dehidrasi.","B":"Sakit kepala yang teruk.","C":"Batuk dan sakit tekak.","D":"Demam selsema."},"correct":"A","evidence":"F1 (Puan Salmah): Saya dengar di berita, kes strok haba dan dehidrasi semakin meningkat."},{"id":4,"text":"Bagaimanakah cuaca panas terik mempengaruhi aktiviti luar?","options":{"A":"Tiada kesan kepada aktiviti harian.","B":"Menggalakkan aktiviti sukan.","C":"Membolehkan aktiviti pertanian.","D":"Menyebabkan aktiviti luar berkurangan."},"correct":"D","evidence":"F1 (Puan Salmah): ...memang semua aktiviti luar terpaksa ditangguhkan. M1 (Encik Azmi): Sukan petang pun sepi, tiada siapa yang berani berjemur."},{"id":5,"text":"Apakah punca cuaca panas melampau yang disebut oleh Encik Azmi?","options":{"A":"Pencemaran sungai.","B":"Kekurangan hujan.","C":"Penebangan hutan dan pembangunan tidak terkawal.","D":"Pembakaran terbuka."},"correct":"C","evidence":"M1 (Encik Azmi): Saya rasa ini semua kesan daripada pemanasan global dan juga pembangunan yang tidak terkawal. Banyak pokok yang dah ditebang untuk bina bangunan tinggi."},{"id":6,"text":"Apakah langkah segera yang disarankan untuk menghadapi cuaca panas ini?","options":{"A":"Mandi lebih kerap.","B":"Menonton televisyen.","C":"Minum banyak air dan elakkan terdedah matahari.","D":"Menjalankan aktiviti luar rumah."},"correct":"C","evidence":"F1 (Puan Salmah): Minum banyak air kosong dan elakkan terdedah kepada matahari secara langsung. Duduk sahaja di rumah yang sejuk lebih baik."},{"id":7,"text":"Apakah cadangan tindakan komuniti yang diberikan oleh Encik Azmi?","options":{"A":"Mengadakan pesta ria.","B":"Memasang penghawa dingin di setiap rumah.","C":"Mengadakan gotong-royong menanam pokok.","D":"Mengurangkan penggunaan air."},"correct":"C","evidence":"M1 (Encik Azmi): Mungkin boleh lancarkan kempen kesedaran atau gotong-royong menanam pokok."},{"id":8,"text":"Apakah harapan Encik Azmi untuk masa hadapan berkaitan isu cuaca?","options":{"A":"Manusia akan menyesuaikan diri dengan kepanasan.","B":"Cuaca akan sentiasa panas.","C":"Kerajaan akan mengubah cuaca dengan teknologi.","D":"Ada sinar harapan untuk masa depan yang lebih lestari."},"correct":"D","evidence":"M1 (Encik Azmi): ...kita perlu terus berusaha menjaga alam sekitar kita. Semoga ada sinar harapan untuk masa depan yang lebih lestari."}]},{"id":2,"title":"Bhg 2 (S9-14)","type":"objective","situation":"Hujan lebat berterusan sepanjang hari mengakibatkan paras air sungai melimpah tebing.","dialogue":"","questions":[{"id":9,"text":"Apakah yang dibimbangkan oleh Aina mengenai paras air sungai yang naik mendadak?","options":{"A":"Hujan akan berhenti tidak lama lagi.","B":"Pergerakan di jalan raya akan terganggu.","C":"Akan berlaku banjir kilat yang menjejaskan penduduk.","D":"Bekalan elektrik akan terputus serta-merta."},"correct":"C","evidence":"F1 (Aina): Betul ke? Aduh, kalau macam tu tak mustahil akan berlaku banjir kilat pula. Risaukan penduduk di kawasan rendah."},{"id":10,"text":"Apakah nasihat Aina kepada orang ramai berdasarkan situasi cuaca semasa?","options":{"A":"Mengambil langkah berjaga-jaga termasuk mengangkat barang berharga.","B":"Membeli-belah di kedai runcit berdekatan segera.","C":"Meninjau keadaan paras air sungai setiap jam.","D":"Berhenti melakukan sebarang aktiviti di luar rumah."},"correct":"A","evidence":"F1 (Aina): Harap semua orang dah ambil langkah berjaga-jaga. Saya lihat beberapa orang jiran saya dah mula mengangkat barang-barang berharga ke tempat yang lebih tinggi."},{"id":11,"text":"Apakah yang dapat kita pelajari daripada pengalaman banjir besar yang lalu seperti yang diceritakan?","options":{"A":"Bantuan daripada pihak luar sentiasa tiba lewat.","B":"Kerajaan tidak cukup bersedia menghadapi bencana.","C":"Masyarakat menunjukkan semangat kerjasama yang tinggi.","D":"Sumber bekalan makanan dan air bersih tidak mencukupi."},"correct":"C","evidence":"M1 (Hafiz): Ya, semangat kejiranan dan kerjasama memang terserlah waktu itu. Semua orang bekerjasama, tak kira bangsa atau agama, menghulurkan bantuan."},{"id":12,"text":"Apakah punca utama berlakunya cuaca ekstrem seperti yang dibincangkan oleh Hafiz dan Aina?","options":{"A":"Penyelenggaraan sistem saliran yang kurang cekap.","B":"Peningkatan kadar pembuangan sampah ke sungai.","C":"Perubahan iklim global yang kian meruncing.","D":"Kekurangan penanaman pokok di kawasan bandar."},"correct":"C","evidence":"M1 (Hafiz): Cuaca ekstrem seperti ini semakin kerap berlaku sejak kebelakangan ini, ya? Rasanya perubahan iklim memang memberikan impak yang besar. F1 (Aina): Itu memang tidak dapat dinafikan, Hafiz. Kajian saintis menunjukkan pola hujan di rantau kita semakin tidak menentu."},{"id":13,"text":"Apakah faktor lain yang boleh menyumbang kepada masalah banjir kilat di kawasan perumahan seperti yang dibincangkan?","options":{"A":"Kualiti bangunan rumah yang tidak kukuh.","B":"Sistem saliran yang tersumbat dengan sampah.","C":"Kekurangan infrastruktur jalan raya yang baik.","D":"Rekaan bandar yang tidak mesra alam sekitar."},"correct":"B","evidence":"F1 (Aina): Tetapi, memang ada beberapa longkang yang tersumbat dengan sampah sarap. Itu yang merisaukan. M1 (Hafiz): Jadi, faktor kebersihan saliran pun memainkan peranan penting untuk mengelakkan banjir, ya? F1 (Aina): Tentunya. Jika longkang tersumbat, air hujan tidak dapat mengalir dengan baik..."},{"id":14,"text":"Apakah peranan penting pertubuhan bukan kerajaan (NGO) dalam menghadapi bencana banjir?","options":{"A":"Membangunkan pelan tindakan banjir yang komprehensif.","B":"Memberikan arahan rasmi kepada mangsa untuk berpindah.","C":"Melengkapi usaha kerajaan dalam memberi bantuan dan sokongan.","D":"Mengawal selia paras air sungai dan membina benteng baharu."},"correct":"C","evidence":"M1 (Hafiz): Ya, peranan NGO memang tak boleh dipandang ringan. Mereka pelengkap kepada usaha kerajaan. Tanpa mereka, beban kerajaan akan lebih besar."}]},{"id":3,"title":"Bhg 3 (S15-19)","type":"objective","situation":"Angin kencang merosakkan beberapa bumbung rumah penduduk di kawasan perkampungan itu.","dialogue":"","questions":[{"id":15,"text":"Apakah kerosakan utama yang dialami oleh penduduk kampung akibat angin kencang itu?","options":{"A":"Tiang elektrik tumbang.","B":"Pokok besar menghalang jalan.","C":"Bumbung rumah rosak.","D":"Banjir kilat berlaku."},"correct":"C","evidence":"F1 (Puan Fatimah): Bumbung rumah kami dan beberapa jiran memang tercabut. Ia kerosakan yang paling ketara di kampung kami."},{"id":16,"text":"Apakah tindakan segera yang diambil oleh penduduk kampung selepas kejadian angin kencang?","options":{"A":"Memohon bantuan kewangan daripada kerajaan.","B":"Menunggu bantuan daripada Jabatan Bomba dan Penyelamat.","C":"Bergotong-royong menutupi bumbung yang rosak.","D":"Memindah masuk ke pusat pemindahan sementara."},"correct":"C","evidence":"F1 (Puan Fatimah): Sejurus angin reda, kami penduduk kampung mula bergotong-royong. Lelaki-lelaki menutupi bahagian bumbung yang terbuka dengan kanvas."},{"id":17,"text":"Siapakah antara berikut yang telah menghulurkan bantuan kepada penduduk kampung yang terjejas?","options":{"A":"Pihak swasta dan kontraktor.","B":"Pejabat Daerah dan NGO tempatan.","C":"Hanya Jabatan Bomba dan Penyelamat.","D":"Pusat pemindahan sementara."},"correct":"B","evidence":"F1 (Puan Fatimah): Wakil Pejabat Daerah ada datang untuk mencatat maklumat kerosakan. Beberapa sukarelawan NGO tempatan turut membantu mengagihkan makanan dan minuman."},{"id":18,"text":"Apakah kebimbangan utama yang dihadapi oleh penduduk kampung selepas kejadian angin kencang?","options":{"A":"Kebimbangan tentang bekalan makanan yang tidak mencukupi.","B":"Trauma dan kos pembaikan rumah yang tinggi.","C":"Kekurangan air bersih dan elektrik.","D":"Penyakit berjangkit yang merebak."},"correct":"B","evidence":"F1 (Puan Fatimah): Beberapa jiran masih trauma dan bimbang jika angin kencang itu berulang lagi. Kos pembaikan yang tinggi juga menjadi kerisauan utama kami."},{"id":19,"text":"Apakah cadangan Puan Fatimah untuk penduduk kampung bagi menghadapi kejadian angin kencang pada masa hadapan?","options":{"A":"Membina semula rumah menggunakan kayu sepenuhnya.","B":"Mengabaikan ramalan cuaca dan teruskan aktiviti harian.","C":"Meningkatkan kesedaran tentang bahan binaan kukuh dan peka ramalan cuaca.","D":"Berpindah ke kawasan bandar yang lebih selamat."},"correct":"C","evidence":"F1 (Puan Fatimah): Saya rasa kesedaran tentang bahan binaan yang kukuh dan reka bentuk bumbung tahan angin perlu ditingkatkan. Penduduk juga mesti peka ramalan cuaca dan sentiasa berjaga-jaga."}]},{"id":4,"title":"Bhg 4 (S20-28)","type":"objective","situation":"Kabus tebal menyelubungi laluan pergunungan, mengurangkan jarak penglihatan pemandu kenderaan.","dialogue":"Situasi: Kabus tebal menyelubungi laluan pergunungan, mengurangkan jarak penglihatan pemandu kenderaan.\n\nM1 (Pencerita): Soalan-soalan 20 hingga 28.\n(Jeda 3 saat.)\nM1 (Pencerita): Anda akan mendengar perbualan tentang situasi kabus tebal di laluan pergunungan.\n\nM1 (Pencerita): Soalan 20.\nM1 (Cikgu Zaki): Puan Liza, saya lewat pagi ini. Kabus tebal di pergunungan buat jarak penglihatan terhad. Terpaksa memandu perlahan.\nF1 (Puan Liza): Ya, saya perasan Cikgu. Bahaya di selekoh. Pemandu teragak-agak, takut kemalangan.\nM1 (Pencerita): Apakah punca utama kesukaran memandu di laluan pergunungan pagi ini?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 21.\nM1 (Cikgu Zaki): Risau kenderaan laju, walau pandang kurang 50m. Mereka tak serius amaran keselamatan.\nF1 (Puan Liza): Betul. Sikap membimbangkan. Dalam kabus, kurangkan kelajuan, berhati-hati itu penting.\nM1 (Pencerita): Apakah tindakan yang disarankan kepada pemandu ketika kabus tebal?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 22.\nM1 (Cikgu Zaki): Lampu kabus banyak kenderaan tak berfungsi atau tak pasang. Penting kan untuk keterlihatan?\nF1 (Puan Liza): Tentu. Lampu kabus direka menembusi kabus, agar pemandu lain nampak kita. Semua patut pasang.\nM1 (Pencerita): Mengapakah lampu kabus penting digunakan semasa kabus tebal?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan dua puluh tiga.\nM1 (Cikgu Zaki): Pemandu cuai boleh sebabkan kemalangan. Ingat kejadian minggu lepas, kereta terbabas.\nF1 (Puan Liza): Ya, kabus menyumbang. Jaga jarak selamat antara kenderaan untuk brek kecemasan.\nM1 (Pencerita): Selain kelajuan, apakah tindakan lain yang perlu diambil oleh pemandu untuk keselamatan?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan dua puluh empat.\nM1 (Cikgu Zaki): Pihak berkuasa perlu tambah papan tanda amaran dan lampu berkelip di laluan berkabus.\nF1 (Puan Liza): Cadangan baik. Papan tanda ingatkan bahaya, galakkan kewaspadaan. Kurangkan kemalangan.\nM1 (Pencerita): Apakah cadangan untuk meningkatkan keselamatan jalan raya?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 25.\nM1 (Cikgu Zaki): Sistem navigasi moden boleh beri amaran awal kabus? Bantu pemandu rancang perjalanan.\nF1 (Puan Liza): Aplikasi navigasi ada fungsi laporan keadaan jalan masa nyata, termasuk cuaca. Manfaatkan teknologi.\nM1 (Pencerita): Bagaimanakah teknologi navigasi boleh membantu pemandu dalam situasi kabus?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 26.\nM1 (Cikgu Zaki): Cuaca pergunungan tak menentu. Pemandu perlu sedia perubahan cuaca tiba-tiba.\nF1 (Puan Liza): Betul. Kenderaan juga perlu sentiasa baik. Tayar, brek, wiper perlu diperiksa selalu.\nM1 (Pencerita): Selain berhati-hati, apakah persediaan tambahan yang perlu diambil oleh pemandu berkaitan kenderaan?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 27.\nM1 (Cikgu Zaki): Ada waktu tertentu kabus lebih kerap di sini?\nF1 (Puan Liza): Biasanya awal pagi dan lewat petang, selepas hujan atau perbezaan suhu ketara. Fenomena semula jadi.\nM1 (Pencerita): Bilakah kebarangkalian kabus tebal sering berlaku di kawasan pergunungan?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 28.\nM1 (Cikgu Zaki): Langkah proaktif pemandu dan pihak berkuasa penting untuk keselamatan di laluan berisiko.\nF1 (Puan Liza): Tepat. Kesedaran dan tanggungjawab bersama kunci elak insiden. Semua ada peranan.\nM1 (Pencerita): Apakah kesimpulan utama perbualan ini mengenai keselamatan jalan raya di laluan pergunungan?\n(Jeda 3 saat.)","questions":[{"id":20,"text":"Apakah punca utama kesukaran memandu di laluan pergunungan pagi ini?","options":{"A":"Jalan licin akibat hujan lebat.","B":"Trafik sesak yang tidak dijangka.","C":"Jarak penglihatan terhad kerana kabus tebal.","D":"Kerosakan jalan raya yang teruk."},"correct":"C","evidence":"Kabus tebal di pergunungan buat jarak penglihatan terhad."},{"id":21,"text":"Apakah tindakan yang disarankan kepada pemandu ketika kabus tebal?","options":{"A":"Memandu seperti biasa dan mengikut had laju.","B":"Menggunakan lampu tinggi secara berterusan.","C":"Mengurangkan kelajuan dan memandu berhati-hati.","D":"Membunyikan hon berulang kali untuk memberi amaran."},"correct":"C","evidence":"Dalam kabus, kurangkan kelajuan, berhati-hati itu penting."},{"id":22,"text":"Mengapakah lampu kabus penting digunakan semasa kabus tebal?","options":{"A":"Untuk menjadikan kenderaan lebih bergaya.","B":"Untuk menembusi kabus dan meningkatkan keterlihatan.","C":"Untuk mengelakkan masalah elektrik kenderaan.","D":"Untuk mengurangkan penggunaan minyak."},"correct":"B","evidence":"Lampu kabus direka menembusi kabus, agar pemandu lain nampak kita."},{"id":23,"text":"Selain kelajuan, apakah tindakan lain yang perlu diambil oleh pemandu untuk keselamatan?","options":{"A":"Memasang muzik dengan kuat.","B":"Menjaga jarak selamat antara kenderaan.","C":"Berhenti di tepi jalan untuk berehat.","D":"Memintas kenderaan lain dengan segera."},"correct":"B","evidence":"Jaga jarak selamat antara kenderaan untuk brek kecemasan."},{"id":24,"text":"Apakah cadangan M1 untuk meningkatkan keselamatan jalan raya?","options":{"A":"Menambah bilangan stesen minyak.","B":"Memasang lebih banyak papan tanda dan lampu amaran.","C":"Meluaskan jalan raya kepada tiga lorong.","D":"Mengadakan lebih banyak restoran di tepi jalan."},"correct":"B","evidence":"Pihak berkuasa perlu tambah papan tanda amaran dan lampu berkelip di laluan berkabus."},{"id":25,"text":"Bagaimanakah teknologi navigasi boleh membantu pemandu dalam situasi kabus?","options":{"A":"Menghantar mesej kepada rakan-rakan.","B":"Menawarkan hiburan semasa memandu.","C":"Memberikan amaran awal tentang keadaan jalan dan cuaca.","D":"Mencari tempat letak kereta terdekat."},"correct":"C","evidence":"Aplikasi navigasi ada fungsi laporan keadaan jalan masa nyata, termasuk cuaca."},{"id":26,"text":"Selain berhati-hati, apakah persediaan tambahan yang perlu diambil oleh pemandu berkaitan kenderaan?","options":{"A":"Memasang aksesori kenderaan yang baharu.","B":"Memastikan kenderaan sentiasa dalam keadaan baik.","C":"Mengisi minyak kenderaan melebihi paras penuh.","D":"Menukar warna kenderaan."},"correct":"B","evidence":"Kenderaan juga perlu sentiasa baik. Tayar, brek, wiper perlu diperiksa selalu."},{"id":27,"text":"Bilakah kebarangkalian kabus tebal sering berlaku di kawasan pergunungan?","options":{"A":"Pada waktu tengah hari sahaja.","B":"Sepanjang hari tanpa henti.","C":"Awal pagi dan lewat petang.","D":"Hanya pada waktu malam."},"correct":"C","evidence":"Biasanya awal pagi dan lewat petang, selepas hujan atau perbezaan suhu ketara."},{"id":28,"text":"Apakah kesimpulan utama perbualan ini mengenai keselamatan jalan raya di laluan pergunungan?","options":{"A":"Keadaan jalan raya tidak boleh diperbaiki.","B":"Pemandu tidak perlu bimbang tentang kabus.","C":"Keselamatan adalah tanggungjawab pihak berkuasa semata-mata.","D":"Kerjasama pemandu dan pihak berkuasa penting untuk keselamatan."},"correct":"D","evidence":"Langkah proaktif pemandu dan pihak berkuasa penting untuk keselamatan di laluan berisiko. Kesedaran dan tanggungjawab bersama kunci elak insiden. Semua ada peranan."}]},{"id":5,"title":"Bhg 5 (S29-34)","type":"objective","situation":"Ribut petir melanda secara tiba-tiba, menyebabkan bekalan elektrik terputus di beberapa daerah.","dialogue":"Situasi: Ribut petir melanda secara tiba-tiba, menyebabkan bekalan elektrik terputus di beberapa daerah.\n(Jeda 3 saat.)\nM1 (Pencerita): Anda akan mendengar perbualan tentang situasi bekalan elektrik terputus akibat ribut petir.\n\nM1 (Pencerita): Soalan 29.\nM1 (Encik Badrul): Aduh, Puan Aminah! Saya ingatkan ada apa tadi. Tiba-tiba gelap gelita. Bekalan elektrik terputus rupanya. Kuat betul bunyi guruh dan kilat sebentar tadi, saya pun terperanjat.\nF1 (Puan Aminah): Ya, Encik Badrul. Saya pun sama. Langit tadi gelap-gelita sekelip mata, kemudian diikuti angin kencang berderu-deru. Saya rasa ribut petir yang melanda tiba-tiba ini telah menyebabkan masalah kepada pencawang elektrik berhampiran. Kuat betul hentaman kilatnya.\nM1 (Pencerita): Apakah punca utama bekalan elektrik terputus berdasarkan perbualan Encik Badrul dan Puan Aminah?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan tiga puluh.\nM1 (Encik Badrul): Saya baru nak siapkan laporan kerja penting. Segala-galanya terhenti sekarang. Kesian anak-anak, televisyen dan gajet mereka tak boleh guna. Bilik pun jadi panas, kipas tak berfungsi. Bahang sungguh!\nF1 (Puan Aminah): Itu la pasal, Encik Badrul. Saya pula baru nak mula masak makan malam. Nasi pun belum sempat tanak. Habislah bahan mentah seperti ayam dan ikan dalam peti sejuk jika bekalan elektrik terputus lama. Banyak kerja rumah yang perlukan elektrik terbantut, contohnya mesin basuh.\nM1 (Pencerita): Apakah kesan serta-merta yang dialami oleh Puan Aminah akibat ketiadaan elektrik?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan tiga puluh satu.\nM1 (Encik Badrul): Saya rasa ini bukan kawasan kita sahaja yang terjejas. Tadi saya sempat tengok di media sosial, ada beberapa daerah lain di sekitar kawasan bandar pun melaporkan perkara yang sama. Ribut petir kali ini memang agak luar biasa kekuatannya, mungkin merentasi kawasan yang luas.\nF1 (Puan Aminah): Betul kata Encik Badrul. Kalau sudah melibatkan beberapa daerah, saya bimbang pemulihan bekalan akan memakan masa yang agak lama. Saya harap Tenaga Nasional Berhad (TNB) dapat pulihkan dengan cepat. Kalau tidak, pasti banyak urusan harian penduduk terganggu.\nM1 (Pencerita): Apakah kebimbangan utama Puan Aminah berkaitan skala kerosakan bekalan elektrik?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan tiga puluh dua.\nM1 (Encik Badrul): Sekarang ni apa kita nak buat ya, Puan Aminah? Saya dah cuba hubungi pusat aduan TNB, tapi talian sibuk sangat. Mungkin ramai yang membuat aduan serentak.\nF1 (Puan Aminah): Kita kena bersabar, Encik Badrul. Saya dah keluarkan lilin, lampu suluh, dan lilin wangi untuk menerangi rumah. Nasib baik ada power bank untuk mengecas telefon bimbit. Saya juga dah pastikan semua peralatan elektrik dicabut plag untuk mengelakkan litar pintas apabila elektrik pulih nanti.\nM1 (Pencerita): Apakah persediaan yang telah dilakukan oleh Puan Aminah bagi menghadapi ketiadaan elektrik?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 33.\nM1 (Encik Badrul): Saya risau juga kalau bekalan air turut terjejas. Selalunya pam air perlukan elektrik. Harap-harap tidaklah. Susah nanti kalau tiada air juga, kita nak mandi dan bersuci pun payah.\nF1 (Puan Aminah): Oh, itu satu lagi masalah yang saya tak terfikir sampai situ. Semoga tidak berlaku. Tapi, kalau bekalan elektrik terputus lebih daripada 24 jam, makanan basah dan beku dalam peti sejuk memang akan rosak. Itu yang paling membimbangkan saya, Encik Badrul. Membazir nanti.\nM1 (Pencerita): Apakah kebimbangan utama Puan Aminah jika bekalan elektrik terputus dalam tempoh yang sangat lama?\n(Jeda 3 saat.)\n\nM1 (Pencerita): Soalan 34.\nM1 (Encik Badrul): Saya harap pihak berkuasa dan TNB dapat menangani masalah ini secepat mungkin. Cuaca pun nampak sudah reda sedikit. Mungkin itu petanda yang baik untuk kerja-kerja pembaikan.\nF1 (Puan Aminah): Harap-harap begitulah. Keadaan gelap-gelita dan panas ni buat kita jadi tak selesa dan agak cemas. Apapun, kita doakanlah agar bekalan elektrik kembali pulih dan semuanya kembali normal dalam masa terdekat. Keselamatan keluarga pun perlu diutamakan dalam situasi begini.\nM1 (Pencerita): Apakah harapan utama kedua-dua watak berkaitan situasi ketiadaan bekalan elektrik ini?\n(Jeda 3 saat.)","questions":[{"id":29,"text":"Apakah punca utama bekalan elektrik terputus berdasarkan perbualan Encik Badrul dan Puan Aminah?","options":{"A":"Masalah pada pencawang elektrik","B":"Hentaman kilat yang kuat","C":"Ribut petir secara tiba-tiba","D":"Angin kencang dan guruh kuat"},"correct":"C","evidence":"F1 (Puan Aminah): \"Saya rasa ribut petir yang melanda tiba-tiba ini telah menyebabkan masalah kepada pencawang elektrik berhampiran.\""},{"id":30,"text":"Apakah kesan serta-merta yang dialami oleh Puan Aminah akibat ketiadaan elektrik?","options":{"A":"Tidak dapat menyiapkan laporan kerja","B":"Makanan dalam peti sejuk akan rosak","C":"Masalah untuk memasak dan melakukan kerja rumah","D":"Anak-anak tidak dapat menonton televisyen"},"correct":"C","evidence":"F1 (Puan Aminah): \"Saya pula baru nak mula masak makan malam. Nasi pun belum sempat tanak. ... Banyak kerja rumah yang perlukan elektrik terbantut, contohnya mesin basuh.\""},{"id":31,"text":"Apakah kebimbangan utama Puan Aminah berkaitan skala kerosakan bekalan elektrik?","options":{"A":"Banyak urusan harian penduduk terganggu","B":"Ribut petir yang luar biasa kekuatannya","C":"Melibatkan kawasan bandar yang luas","D":"Pemulihan bekalan akan memakan masa lama"},"correct":"D","evidence":"F1 (Puan Aminah): \"Kalau sudah melibatkan beberapa daerah, saya bimbang pemulihan bekalan akan memakan masa yang agak lama.\""},{"id":32,"text":"Apakah persediaan yang telah dilakukan oleh Puan Aminah bagi menghadapi ketiadaan elektrik?","options":{"A":"Mengecas telefon dan menghubungi TNB","B":"Menyalakan lilin dan menyediakan power bank","C":"Mencabut plag peralatan elektrik dan bersabar","D":"Menyediakan lilin, lampu suluh, power bank, dan mencabut plag"},"correct":"D","evidence":"F1 (Puan Aminah): \"Saya dah keluarkan lilin, lampu suluh, dan lilin wangi... Nasib baik ada power bank... Saya juga dah pastikan semua peralatan elektrik dicabut plag...\""},{"id":33,"text":"Apakah kebimbangan utama Puan Aminah jika bekalan elektrik terputus dalam tempoh yang sangat lama?","options":{"A":"Bekalan air mungkin terjejas","B":"Peralatan elektrik akan rosak","C":"Makanan dalam peti sejuk akan membusuk","D":"Kesukaran untuk mandi dan bersuci"},"correct":"C","evidence":"F1 (Puan Aminah): \"Tapi, kalau bekalan elektrik terputus lebih daripada 24 jam, makanan basah dan beku dalam peti sejuk memang akan rosak. Itu yang paling membimbangkan saya, Encik Badrul.\""},{"id":34,"text":"Apakah harapan utama kedua-dua watak berkaitan situasi ketiadaan bekalan elektrik ini?","options":{"A":"Cuaca kembali cerah dan pembaikan berjalan lancar","B":"Bekalan elektrik pulih dengan cepat dan keadaan kembali normal","C":"Pihak berkuasa dapat mengatasi masalah keselamatan","D":"Keluarga mereka dapat melalui situasi ini dengan tenang"},"correct":"B","evidence":"F1 (Puan Aminah): \"kita doakanlah agar bekalan elektrik kembali pulih dan semuanya kembali normal dalam masa terdekat.\" (Encik Badrul juga berharap \"pihak berkuasa dan TNB dapat menangani masalah ini secepat mungkin.\")"}]},{"id":6,"title":"Bhg 6 (S35-37)","type":"objective","situation":"Musim kemarau panjang menyebabkan tanah menjadi kering-kontang dan hasil pertanian terjejas teruk.","dialogue":"","questions":[{"id":35,"text":"Apakah kesan utama kemarau panjang terhadap tanah dan hasil pertanian di kawasan Puan Hamidah?","options":{"A":"Tanah menjadi subur dan sesuai untuk pelbagai tanaman.","B":"Tanah menjadi kering-kontang dan merekah.","C":"Hasil tuaian padi merosot teruk.","D":"Tanaman padi tumbuh lebih subur dan cepat.","E":"Bekalan air bawah tanah meningkat."},"correct":["B","C"],"evidence":"F1 (Puan Hamidah): 'Tanah sawah kami merekah teruk, kering-kontang seperti padang jarak padang tekukur.' dan 'Hasil tuaian kami dijangka merosot sehingga lebih 70 peratus berbanding musim biasa.'"},{"id":36,"text":"Bagaimanakah kemarau panjang ini mempengaruhi kehidupan ekonomi dan sosial penduduk kampung secara keseluruhan?","options":{"A":"Pendapatan petani menjadi lebih stabil dan tinggi.","B":"Petani terpaksa mencari pekerjaan sampingan di bandar.","C":"Kos sara hidup menurun akibat bekalan makanan yang banyak.","D":"Bekalan air bersih untuk kegunaan harian mula berkurangan.","E":"Petani tidak perlu berhutang kerana hasil jualan lumayan."},"correct":["B","D"],"evidence":"F1 (Puan Hamidah): 'Ramai yang terpaksa mencari pekerjaan sampingan di bandar, ada juga yang berhutang...' dan 'Bekalan air bersih untuk kegunaan harian juga mula berkurangan, menjadikan kehidupan semakin sukar.'"},{"id":37,"text":"Apakah langkah-langkah yang dicadangkan oleh Puan Hamidah untuk mengatasi cabaran kemarau pada masa hadapan?","options":{"A":"Mengurangkan bantuan subsidi untuk benih pertanian.","B":"Memperkenalkan sistem pengairan yang lebih efisien.","C":"Menyediakan bantuan kewangan kecemasan kepada petani.","D":"Menggalakkan penanaman padi secara berlebihan.","E":"Mengabaikan penanaman tanaman tahan kemarau."},"correct":["B","C"],"evidence":"F1 (Puan Hamidah): '...bantuan subsidi benih tahan kemarau, sistem pengairan yang lebih efisien, dan juga bantuan kewangan kecemasan amatlah diperlukan.'"}]}];
+const reqPassword = "21";
+const gasAppUrl = "https://script.google.com/macros/s/AKfycbztb-uoLIo-DnUlVJxNDEZrlBqdr9T4YrhK4W3muNwgTtASHMHo2D6EZ8QhCj2oPPfH/exec";
+const topicName = "cuaca";
+const moduleTitle = "Latihan Mendengar IGCSE (40 Marks)";
+const storageKey = "neil_quiz_" + btoa(encodeURIComponent(moduleTitle).replace(/%/g, "")).substring(0, 15);
+
+let cur = 0; 
+let ans = JSON.parse(localStorage.getItem(storageKey + "_ans") || "{}"); 
+let submitted = localStorage.getItem(storageKey + "_sub") === "true"; 
+let totalMarks = 0; let requiredAnswers = 0;
+
+let studentName = localStorage.getItem(storageKey + "_name") || "";
+let studentYear = localStorage.getItem(storageKey + "_year") || "";
+let studentLevel = localStorage.getItem(storageKey + "_level") || "";
+let studentTeacher = localStorage.getItem(storageKey + "_teacher") || "";
+
+sections.forEach(function(s) {
+    let isM = s.id === 6 && s.type === "objective";
+    (s.questions || []).forEach(function(q) { 
+        totalMarks += isM ? 2 : 1; 
+        requiredAnswers += isM ? 2 : 1; 
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("total-display")) {
+        document.getElementById("total-display").innerText = totalMarks;
+    }
+
+    document.body.addEventListener("click", function(e) {
+        let btnOpt = e.target.closest('.opt-btn');
+        if (btnOpt && !btnOpt.hasAttribute('disabled')) {
+            let qid = parseInt(btnOpt.getAttribute('data-qid'));
+            let opt = btnOpt.getAttribute('data-opt');
+            let isMulti = btnOpt.getAttribute('data-ismulti') === 'true';
+            window.saveOpt(qid, opt, isMulti);
+        }
+
+        if (e.target.closest('#btn-refresh')) window.refreshPage();
+        if (e.target.closest('.btn-logout')) window.logoutUser();
+        if (e.target.closest('#btn-submit-quiz')) window.submitQuiz();
+    });
+
+    const box = document.getElementById("box");
+    if (box) {
+        box.addEventListener("input", function(e) {
+            if (e.target.classList.contains('cloze-input')) {
+                let qid = parseInt(e.target.getAttribute('data-qid'));
+                window.saveText(qid, e.target.value);
+            }
+        });
+    }
+});
+
+document.addEventListener("contextmenu", function(e) { e.preventDefault(); }); 
+document.addEventListener("visibilitychange", function() { 
+    if (!submitted && document.getElementById("welcome-modal") && document.getElementById("welcome-modal").classList.contains("hidden")) {
+        if (document.hidden && document.getElementById("app-body")) { document.getElementById("app-body").classList.add("blurred-security"); } 
+        else if (document.getElementById("app-body")) { document.getElementById("app-body").classList.remove("blurred-security"); }
+    }
+});
+document.addEventListener("keydown", function(e) { 
+    if ((e.ctrlKey || e.metaKey) && (e.key === "p" || e.key === "s")) { 
+        e.preventDefault(); alert("Fungsi ini disekat."); 
+    } 
+});
+
+window.checkRegistration = function() {
+    if (studentName && studentYear && studentLevel && studentTeacher) {
+        if (document.getElementById("welcome-modal")) document.getElementById("welcome-modal").classList.add("hidden");
+        if (document.getElementById("main-content")) document.getElementById("main-content").classList.remove("hidden");
+        if (document.getElementById("display-student-name")) document.getElementById("display-student-name").innerText = studentName + " (Cikgu " + studentTeacher + " | Year " + studentYear + " - " + studentLevel + ")";
+        if(submitted) calculateScore();
+        renderTabs(); renderContent(); 
+    } else {
+        if (document.getElementById("welcome-modal")) document.getElementById("welcome-modal").classList.remove("hidden");
+        if (document.getElementById("main-content")) document.getElementById("main-content").classList.add("hidden");
+    }
+};
+
+window.startQuiz = function() {
+    const n = document.getElementById("student-name").value.trim();
+    const y = document.getElementById("student-year").value;
+    const l = document.getElementById("student-level").value;
+    const t = document.getElementById("student-teacher").value;
+    
+    if(n.length < 3) return alert("Sila masukkan nama penuh anda (minimum 3 huruf).");
+    if(!t) return alert("Sila pilih Guru anda.");
+    if(!y) return alert("Sila pilih Tahun (Year) anda.");
+    if(!l) return alert("Sila pilih Tahap Kelas anda.");
+    
+    studentName = n; studentYear = y; studentLevel = l; studentTeacher = t;
+    localStorage.setItem(storageKey + "_name", studentName);
+    localStorage.setItem(storageKey + "_year", studentYear);
+    localStorage.setItem(storageKey + "_level", studentLevel);
+    localStorage.setItem(storageKey + "_teacher", studentTeacher);
+    
+    checkRegistration();
+};
+
+function persistData() {
+    try {
+        localStorage.setItem(storageKey + "_ans", JSON.stringify(ans));
+        localStorage.setItem(storageKey + "_sub", submitted ? "true" : "false");
+    } catch(e) {}
+}
+
+function calculateScore() {
+    let score = 0;
+    sections.forEach(function(s) {
+        let isM = s.id === 6 && s.type === "objective";
+        (s.questions || []).forEach(function(q) {
+            if (s.type === "objective" || s.type === "picture") {
+                if (isM) { 
+                    let uAns = ans[q.id] || []; 
+                    (q.correct || []).forEach(function(c) { if(uAns.includes(c)) score++; }); 
+                } 
+                else { if(ans[q.id] === q.correct) score++; }
+            } else if (s.type === "cloze") {
+                let uAns = (ans[q.id] || "").toLowerCase().trim(); 
+                let cAns = (q.correct || "").toLowerCase().trim();
+                if(uAns !== "" && uAns === cAns) score++;
+            }
+        });
+    });
+    if (document.getElementById("score-display")) {
+        document.getElementById("score-display").innerText = score;
+    }
+    return score;
+}
+
+function renderTabs() {
+    let html = "";
+    sections.forEach(function(s, idx) {
+        let activeClass = cur === idx ? "bg-indigo-600 text-white shadow-md scale-[1.02]" : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50";
+        let ansCount = 0;
+        let targetCount = s.id === 6 && s.type === "objective" ? (s.questions ? s.questions.length * 2 : 0) : (s.questions ? s.questions.length : 0);
+        
+        if(s.questions) { 
+            s.questions.forEach(function(q) { 
+                if(ans[q.id]) { 
+                    if(Array.isArray(ans[q.id])) ansCount += ans[q.id].length; 
+                    else if(ans[q.id].trim() !== "") ansCount++; 
+                } 
+            }); 
+        }
+        let statusDot = (!submitted && ansCount > 0 && ansCount >= targetCount) ? "<span class='inline-block w-2 h-2 rounded-full bg-emerald-400 ml-2'></span>" : "";
+        html += "<button onclick='changeTab(" + idx + ")' class='px-5 py-3 rounded-2xl text-[10px] sm:text-xs font-black uppercase whitespace-nowrap transition-all " + activeClass + "'>" + escapeHTML(s.title) + statusDot + "</button>";
+    });
+    if (document.getElementById("tabs")) {
+        document.getElementById("tabs").innerHTML = html;
+    }
+}
+
+window.changeTab = function(idx) { cur = idx; renderTabs(); renderContent(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+
+window.saveOpt = function(id, v, isM) {
+    if(submitted) return;
+    if(isM) { 
+        if(!ans[id]) ans[id] = []; 
+        let idx = ans[id].indexOf(v); 
+        if(idx > -1) ans[id].splice(idx, 1); 
+        else if(ans[id].length < 2) ans[id].push(v); 
+    } 
+    else { ans[id] = v; }
+    persistData(); renderTabs(); renderContent();
+};
+
+window.saveText = function(id, val) {
+    if(submitted) return;
+    ans[id] = val; persistData(); renderTabs();
+};
+
+window.submitQuiz = function() {
+    let currentAnsCount = 0;
+    Object.values(ans).forEach(function(v) { 
+        if(Array.isArray(v)) currentAnsCount += v.length; 
+        else if(v.trim() !== "") currentAnsCount++; 
+    });
+    if(currentAnsCount < requiredAnswers) { 
+        if(!confirm("Awak belum menanda semua soalan. Teruskan hantar?")) return; 
+    }
+
+    if (reqPassword !== "") {
+        let userPwd = prompt("🛑 KATA LALUAN DIPERLUKAN\n\nSila masukkan kata laluan dari guru:");
+        if (userPwd === null) return; 
+        if (userPwd.trim() !== reqPassword) { alert("❌ Kata laluan salah!"); return; }
+    }
+    
+    const finalScore = calculateScore();
+    if (gasAppUrl && gasAppUrl.startsWith("http")) {
+        document.getElementById("submitting-overlay").classList.remove("hidden");
+        document.getElementById("submitting-overlay").classList.add("flex");
+        
+        const payload = {
+            topic: topicName,
+            name: studentName,
+            year: studentYear,
+            level: studentLevel,
+            teacher: studentTeacher,
+            score: finalScore,
+            total: totalMarks,
+            details: ans
+        };
+
+        fetch(gasAppUrl, { 
+            method: "POST", 
+            mode: "no-cors", 
+            headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+            body: JSON.stringify(payload) 
+        })
+        .then(function() { window.finalizeSubmission(); })
+        .catch(function(err) { alert("Ralat hantar ke database cikgu, tapi jawapan telah disimpan di peranti ini."); window.finalizeSubmission(); });
+    } else { window.finalizeSubmission(); }
+};
+
+window.finalizeSubmission = function() {
+    if (document.getElementById("submitting-overlay")) {
+        document.getElementById("submitting-overlay").classList.add("hidden");
+        document.getElementById("submitting-overlay").classList.remove("flex");
+    }
+    submitted = true; persistData(); calculateScore();
+    if (document.getElementById("app-body")) document.getElementById("app-body").classList.remove("blurred-security");
+    renderTabs(); renderContent(); window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+window.refreshPage = function() {
+    location.reload();
+};
+
+window.logoutUser = function() {
+    if(confirm("AMARAN: Anda pasti untuk log keluar? Semua jawapan akan dipadam!")) {
+        localStorage.removeItem(storageKey + "_ans"); localStorage.removeItem(storageKey + "_sub");
+        localStorage.removeItem(storageKey + "_name"); localStorage.removeItem(storageKey + "_year");
+        localStorage.removeItem(storageKey + "_level"); localStorage.removeItem(storageKey + "_teacher");
+        location.reload();
+    }
+};
+
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function renderContent() {
+    const s = sections[cur]; const b = document.getElementById("box");
+    if (!b) return;
+
+    const isMulti = s.id === 6 && s.type === "objective";
+    let h = "<div class='flex justify-between items-start mb-4'><h2 class='text-2xl font-black text-indigo-950 uppercase tracking-tight'>" + escapeHTML(s.title) + "</h2></div>";
+    
+    if(s.situation) h += "<p class='text-sm font-medium text-slate-500 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100'>" + escapeHTML(s.situation) + "</p>";
+    if(isMulti && !submitted) h += "<div class='bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-4 mb-6 rounded-r-xl font-bold text-sm'>⚠️ PENTING: Anda perlu menanda DUA (2) jawapan untuk soalan di bahagian ini.</div>";
+    
+    if(s.audioUrl) {
+        h += "<div class='bg-indigo-50 p-4 rounded-3xl mb-8 border border-indigo-100 shadow-inner'><div class='text-[10px] font-black text-indigo-600 uppercase mb-2 pl-2'>Rakaman Audio</div><audio controls class='w-full h-10' src='" + s.audioUrl + "'></audio></div>";
+    } else {
+        h += "<div class='bg-indigo-50 p-4 rounded-2xl mb-8 text-center text-[12px] font-black text-indigo-600 uppercase'>Sila dengar audio dari guru.</div>";
+    }
+    
+    if(s.questions && s.questions.length > 0) {
+        s.questions.forEach(function(q) {
+            h += "<div class='mb-10'>";
+            if (s.type === "picture") {
+                if (q.imageData) h += "<div class='w-full h-48 sm:h-64 mb-5 rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-white flex items-center justify-center p-2'><img src='" + q.imageData + "' class='max-w-full max-h-full object-contain rounded-xl'/></div>";
+                h += "<p class='font-bold text-slate-800 mb-5 text-lg'><span class='text-indigo-600 font-black mr-1'>" + q.id + ".</span> " + escapeHTML(q.text) + "</p><div class='grid gap-2'>";
+                Object.keys(q.options || {}).sort().forEach(function(k) {
+                    let v = q.options[k];
+                    if(v && v.trim() !== "") {
+                        let isSelected = ans[q.id] === k; let isActuallyCorrect = q.correct === k; let cl = "opt-btn";
+                        if(submitted) { if(isActuallyCorrect) cl += " correct-answer"; else if (isSelected && !isActuallyCorrect) cl += " wrong-answer"; else cl += " dimmed-answer"; } 
+                        else if(isSelected) cl += " selected shadow-sm";
+                        let safeK = escapeHTML(k).replace(/'/g, "\\'");
+                        h += "<button data-qid='" + q.id + "' data-opt='" + safeK + "' data-ismulti='false' class='" + cl + "' " + (submitted ? "disabled" : "") + "><span class='w-8 inline-block text-slate-400 font-black'>" + k + "</span><span class='flex-1'>" + escapeHTML(v) + "</span></button>";
+                    }
+                });
+                if(submitted && q.evidence) h += "<div class='mt-4 p-4 bg-amber-50 rounded-2xl text-xs font-bold text-amber-800 border border-amber-200'>💡 Bukti: " + escapeHTML(q.evidence) + "</div>";
+                h += "</div>";
+            } 
+            else if (s.type === "cloze") {
+                h += "<p class='font-bold text-slate-800 mb-3 text-lg'><span class='text-indigo-600 font-black mr-1'>" + q.id + ".</span> " + escapeHTML(q.text) + "</p>";
+                let uAns = ans[q.id] || ""; let isCorrect = false;
+                if (submitted) isCorrect = (uAns.toLowerCase().trim() === (q.correct || "").toLowerCase().trim());
+                let inputClass = "w-full p-3 rounded-xl border-2 font-bold outline-none transition-all cloze-input ";
+                if (submitted) { if (isCorrect) inputClass += "border-emerald-500 bg-emerald-50 text-emerald-700"; else inputClass += "border-rose-500 bg-rose-50 text-rose-700 line-through-red"; } 
+                else { inputClass += "border-slate-200 focus:border-indigo-400 text-slate-800"; }
+                let safeAns = escapeHTML(uAns).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                h += "<input type='text' data-qid='" + q.id + "' value='" + safeAns + "' placeholder='Taip jawapan...' class='" + inputClass + "' " + (submitted ? "disabled" : "") + "/>";
+                if(submitted) { if (isCorrect) h += "<div class='mt-2 text-xs font-black text-emerald-600 flex items-center gap-1'>✅ Tepat!</div>"; else h += "<div class='mt-2 p-3 bg-rose-100 text-rose-800 rounded-xl border border-rose-200 text-xs font-bold'>❌ Salah. Jawapan sebenar: <span class='text-rose-900 font-black'>" + escapeHTML(q.correct) + "</span></div>"; }
+            } 
+            else {
+                h += "<p class='font-bold text-slate-800 mb-5 text-lg'><span class='text-indigo-600 font-black mr-1'>" + q.id + ".</span> " + escapeHTML(q.text) + "</p><div class='grid gap-2'>";
+                Object.keys(q.options || {}).sort().forEach(function(k) {
+                    let v = q.options[k];
+                    if(v && v.trim() !== "") {
+                        let isSelected = isMulti ? (ans[q.id] || []).includes(k) : ans[q.id] === k; let isActuallyCorrect = isMulti ? (q.correct || []).includes(k) : q.correct === k; let cl = "opt-btn";
+                        if(submitted) { if(isActuallyCorrect) cl += " correct-answer"; else if (isSelected && !isActuallyCorrect) cl += " wrong-answer"; else cl += " dimmed-answer"; } 
+                        else if(isSelected) cl += " selected shadow-sm";
+                        let safeK = escapeHTML(k).replace(/'/g, "\\'");
+                        h += "<button data-qid='" + q.id + "' data-opt='" + safeK + "' data-ismulti='" + isMulti + "' class='" + cl + "' " + (submitted ? "disabled" : "") + ">";
+                        if (isMulti && !submitted) h += "<div class='w-6 h-6 mr-3 border-2 rounded flex items-center justify-center " + (isSelected ? "bg-indigo-500 border-indigo-500 text-white" : "border-slate-300") + "'>" + (isSelected ? "✓" : "") + "</div>"; else h += "<span class='w-8 inline-block text-slate-400 font-black'>" + k + "</span>";
+                        h += "<span class='flex-1'>" + escapeHTML(v) + "</span></button>";
+                    }
+                });
+                if(submitted && q.evidence) h += "<div class='mt-4 p-4 bg-amber-50 rounded-2xl text-xs font-bold text-amber-800 border border-amber-200'>💡 Bukti: " + escapeHTML(q.evidence) + "</div>";
+                h += "</div>";
+            }
+            h += "</div>";
+        });
+    } else { h += "<div class='text-center py-10 text-slate-400 font-bold uppercase text-xs'>Tiada soalan.</div>"; }
+
+    if(!submitted && cur === sections.length - 1) { h += "<button id='btn-submit-quiz' class='w-full bg-emerald-500 text-white py-5 rounded-[1.5rem] font-black text-lg uppercase shadow-xl transition-all hover:bg-emerald-600 hover:scale-[1.02] mt-6 border-b-4 border-emerald-700'>HANTAR JAWAPAN</button>"; } 
+    else if (!submitted && cur < sections.length - 1) { h += "<button onclick='changeTab(" + (cur + 1) + ")' class='w-full bg-blue-500 text-white py-4 rounded-2xl font-black uppercase shadow-lg transition-all hover:bg-blue-600 mt-4 border-b-4 border-blue-700'>Seterusnya: " + escapeHTML(sections[cur+1].title) + "</button>"; } 
+    else if (submitted && cur === sections.length - 1) { h += "<div class='text-center p-8 bg-emerald-50 rounded-3xl border-2 border-emerald-200 mt-8 shadow-sm'><h3 class='text-2xl font-black text-emerald-600 uppercase mb-2'>Tahniah! Ujian Tamat 🎉</h3><p class='text-sm text-emerald-800 font-medium'>Anda mendapat skor <span class='font-black text-lg'>" + (document.getElementById('score-display') ? document.getElementById('score-display').innerText : score) + " / " + totalMarks + "</span>.</p></div>"; }
+
+    if (b) b.innerHTML = h;
+}
+
+window.onload = function() { checkRegistration(); };
+
+    </script>
+</body>
+</html>
